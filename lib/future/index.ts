@@ -16,7 +16,7 @@ export abstract class Future {
      *  
      * @returns A string with tokens and Fn functions
      */
-    static replaceOnce(search: string, replace: string, subject: string): string {
+    public static replaceOnce(search: string, replace: string, subject: string): string {
 
         const split = Fn.split(search, subject, 2);
 
