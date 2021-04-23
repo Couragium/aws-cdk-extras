@@ -1,7 +1,7 @@
 {
   "name": "@couragium/aws-cdk-extras",
   "version": "0.1.0",
-  "description": "",
+  "description": "Helper methods and higher-level constructs for AWS CDK",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -13,10 +13,11 @@
   },
   "keywords": [
     "aws",
-    "cdk"
+    "cdk",
+    "typescript"
   ],
   "author": "voro@couragium.com",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/Couragium/aws-cdk-extras/issues"
   },
