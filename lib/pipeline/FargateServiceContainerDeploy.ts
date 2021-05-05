@@ -2,13 +2,14 @@ import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import * as codebuild from '@aws-cdk/aws-codebuild';
 import { IRepository } from '@aws-cdk/aws-ecr';
-import { FargateService, TaskDefinition, ContainerDefinition } from '@aws-cdk/aws-ecs';
+import { FargateService } from '@aws-cdk/aws-ecs';
 import { IRuleTarget } from '@aws-cdk/aws-events';
 import { Stack } from '@aws-cdk/core';
 
 interface FargateServiceContainerDeployPipelineProps {
-    tag: string,
+    tag?: string,
     service: FargateService,
+    serviceContainerName?: string,
     repository: IRepository,
     eventTargets?: IRuleTarget[],
 }
@@ -28,10 +29,10 @@ export class FargateServiceContainerDeployPipeline {
         this.service = props.service;
 
         const stages = this.getStages(
-            this.service.serviceName,
+            props.serviceContainerName ||
             // @ts-ignore: containers property is protected
             this.service.taskDefinition.containers[0].containerName,
-            props.tag
+            props.tag || 'latest'
         );
 
         const pipeline = new codepipeline.Pipeline(stack, name, {
@@ -47,7 +48,7 @@ export class FargateServiceContainerDeployPipeline {
 
     }
 
-    private getStages(name: string, containerName: string, containerTag: string = 'latest') {
+    private getStages(name: string, tag: string) {
 
         const sourceOutput = new codepipeline.Artifact(`${name}SourceOutput`);
 
@@ -77,7 +78,7 @@ export class FargateServiceContainerDeployPipeline {
             environment: {
                 buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
                 environmentVariables: {
-                    CONTAINER_NAME: { value: containerName },
+                    CONTAINER_NAME: { value: name },
                 },
             },
         });
@@ -89,7 +90,7 @@ export class FargateServiceContainerDeployPipeline {
                     new codepipeline_actions.EcrSourceAction({
                         actionName: `${name}SourceAction`,
                         repository: this.repository,
-                        imageTag: containerTag,
+                        imageTag: tag,
                         output: sourceOutput,
                     }),
                 ],

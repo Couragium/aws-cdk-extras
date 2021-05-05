@@ -34,7 +34,6 @@ export class FargateServiceFromContainerStack extends Stack {
         });
 
         new FargateServiceContainerDeployPipeline(this, `${props.serviceName}DeployPipeline`, {
-            //containerName: props.containerName,
             tag: props.containerTag,
             service: service.service,
             repository: repository,
