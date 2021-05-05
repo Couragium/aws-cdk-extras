@@ -33,20 +33,11 @@ export class FargateServiceFromContainerStack extends Stack {
             },
         });
 
-        new FargateServiceContainerDeployPipeline(this, `${props.serviceName}DeployPipeline1`, {
-            containerName: props.containerName,
-            containerTag: props.containerTag,
+        new FargateServiceContainerDeployPipeline(this, `${props.serviceName}DeployPipeline`, {
+            //containerName: props.containerName,
+            tag: props.containerTag,
             service: service.service,
             repository: repository,
-        });
-
-        FargateServiceContainerDeployPipeline.fromAttributes(this, {
-            name: `${props.serviceName}DeployPipeline2`,
-            serviceName: props.serviceName,
-            containerName: props.containerName,
-            repositoryName: props.containerName,
-            containerTag: props.containerTag,
-            cluster: props.cluster,
         });
 
     }
