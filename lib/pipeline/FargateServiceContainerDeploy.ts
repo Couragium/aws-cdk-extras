@@ -6,17 +6,26 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import { IRuleTarget } from '@aws-cdk/aws-events';
 import { Stack } from '@aws-cdk/core';
 
-interface FargateServiceContainerDeployPipelineProps {
+interface FargateServiceContainerDeployPipelineAttributes {
+    name: string,
     serviceName: string,
     containerName: string,
+    repositoryName: string,
     containerTag: string,
     cluster: ecs.Cluster,
+}
+
+interface FargateServiceContainerDeployPipelineProps {
+    containerName: string,
+    containerTag: string,
+    service: ecs.IBaseService,
+    repository: ecr.IRepository,
     eventTargets?: IRuleTarget[],
 }
 
 export class FargateServiceContainerDeployPipeline {
 
-    public readonly source: ecr.IRepository;
+    public readonly repository: ecr.IRepository;
 
     public readonly service: ecs.IBaseService;
 
@@ -24,18 +33,12 @@ export class FargateServiceContainerDeployPipeline {
 
     constructor(readonly stack: Stack, readonly name: string, props: FargateServiceContainerDeployPipelineProps) {
 
-        this.source = ecr.Repository.fromRepositoryName(
-            stack, `${name}Repository`, props.containerName
-        );
+        this.repository = props.repository;
 
-        this.service = ecs.FargateService.fromFargateServiceAttributes(
-            stack, `${name}FargateService`, {
-            cluster: props.cluster,
-            serviceName: props.serviceName,
-        });
+        this.service = props.service;
 
         const stages = this.getStages(
-            props.serviceName, props.containerName, props.containerTag
+            this.service.serviceName, props.containerName, props.containerTag
         );
 
         const pipeline = new codepipeline.Pipeline(stack, name, {
@@ -48,6 +51,29 @@ export class FargateServiceContainerDeployPipeline {
         props.eventTargets?.forEach(t => state.addTarget(t));
 
         this.pipeline = pipeline;
+
+    }
+
+    public static fromAttributes(stack: Stack, props: FargateServiceContainerDeployPipelineAttributes) {
+
+        const repository = ecr.Repository.fromRepositoryName(
+            stack, `${props.serviceName}Repository`, props.repositoryName
+        );
+
+        const service = ecs.FargateService.fromFargateServiceAttributes(
+            stack, `${props.serviceName}FargateService`, {
+            cluster: props.cluster,
+            serviceName: props.serviceName,
+        });
+
+        const pipeline = new FargateServiceContainerDeployPipeline(stack, props.name, {
+            containerName: props.containerName,
+            containerTag: props.containerTag,
+            service: service,
+            repository: repository,
+        });
+
+        return pipeline;
 
     }
 
@@ -92,7 +118,7 @@ export class FargateServiceContainerDeployPipeline {
                 actions: [
                     new codepipeline_actions.EcrSourceAction({
                         actionName: `${name}SourceAction`,
-                        repository: this.source,
+                        repository: this.repository,
                         imageTag: containerTag,
                         output: sourceOutput,
                     }),

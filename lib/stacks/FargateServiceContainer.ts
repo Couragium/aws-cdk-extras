@@ -19,23 +19,32 @@ export class FargateServiceFromContainerStack extends Stack {
 
         super(scope, id, props);
 
-        new ApplicationLoadBalancedFargateService(
+        const repository = new Repository(this, `${props.serviceName}Repository`, {
+            repositoryName: props.containerName,
+        });
+
+        const service = new ApplicationLoadBalancedFargateService(
             this, props.serviceName, {
             cluster: props.cluster,
             serviceName: props.serviceName,
             taskImageOptions: {
                 containerName: props.containerName,
-                image: ContainerImage.fromEcrRepository(
-                    new Repository(this, `${props.serviceName}Repository`, {
-                        repositoryName: props.containerName,
-                    }), props.containerTag
-                ),
+                image: ContainerImage.fromEcrRepository(repository, props.containerTag),
             },
         });
 
-        new FargateServiceContainerDeployPipeline(this, `${props.serviceName}DeployPipeline`, {
+        new FargateServiceContainerDeployPipeline(this, `${props.serviceName}DeployPipeline1`, {
+            containerName: props.containerName,
+            containerTag: props.containerTag,
+            service: service.service,
+            repository: repository,
+        });
+
+        FargateServiceContainerDeployPipeline.fromAttributes(this, {
+            name: `${props.serviceName}DeployPipeline2`,
             serviceName: props.serviceName,
             containerName: props.containerName,
+            repositoryName: props.containerName,
             containerTag: props.containerTag,
             cluster: props.cluster,
         });
