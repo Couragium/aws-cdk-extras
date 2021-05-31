@@ -25,22 +25,22 @@
   "devDependencies": {
     "@types/node": "14.14.41",
     "@types/source-map-support": "^0.5.3",
-    "aws-cdk": "1.100.0",
+    "aws-cdk": "1.106.1",
     "ts-node": "9.1.1",
     "typescript": "4.2.4"
   },
   "dependencies": {
-    "@aws-cdk/aws-cloudtrail": "1.100.0",
-    "@aws-cdk/aws-codepipeline": "1.100.0",
-    "@aws-cdk/aws-codepipeline-actions": "1.100.0",
-    "@aws-cdk/aws-ec2": "1.100.0",
-    "@aws-cdk/aws-ecr": "1.100.0",
-    "@aws-cdk/aws-ecs": "1.100.0",
-    "@aws-cdk/aws-ecs-patterns": "1.100.0",
-    "@aws-cdk/aws-elasticache": "1.100.0",
-    "@aws-cdk/aws-qldb": "1.100.0",
-    "@aws-cdk/aws-secretsmanager": "1.100.0",
-    "@aws-cdk/core": "1.100.0",
+    "@aws-cdk/aws-cloudtrail": "1.106.1",
+    "@aws-cdk/aws-codepipeline": "1.106.1",
+    "@aws-cdk/aws-codepipeline-actions": "1.106.1",
+    "@aws-cdk/aws-ec2": "1.106.1",
+    "@aws-cdk/aws-ecr": "1.106.1",
+    "@aws-cdk/aws-ecs": "1.106.1",
+    "@aws-cdk/aws-ecs-patterns": "1.106.1",
+    "@aws-cdk/aws-elasticache": "1.106.1",
+    "@aws-cdk/aws-qldb": "1.106.1",
+    "@aws-cdk/aws-secretsmanager": "1.106.1",
+    "@aws-cdk/core": "1.106.1",
     "source-map-support": "^0.5.19"
   }
 }
